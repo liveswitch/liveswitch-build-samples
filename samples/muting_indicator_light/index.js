@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const userVideo = document.getElementById("userVideo");
   const remoteVideo = document.getElementById("remoteVideo");
+  const remoteStatusOverlay = document.getElementById("remoteStatusOverlay");
   const joinButton = document.getElementById("joinButton");
   const leaveButton = document.getElementById("leaveButton");
   const muteMicrophoneButton = document.getElementById("muteMicrophoneButton");
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let receiverClient;
   let senderChannel;
   let receiverChannel;
+  let senderUpstreamConnection;
 
   fm.liveswitch.Log.registerProvider(new fm.liveswitch.ConsoleLogProvider(fm.liveswitch.LogLevel.Debug));
 
@@ -60,8 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function openSfuUpstreamConnection() {
     let audioStream = new fm.liveswitch.AudioStream(localAudio);
     let videoStream = new fm.liveswitch.VideoStream(localVideo);
-    let conn = senderChannel.createSfuUpstreamConnection(audioStream, videoStream);
-    return conn.open().fail(ex => {
+    senderUpstreamConnection = senderChannel.createSfuUpstreamConnection(audioStream, videoStream);
+    return senderUpstreamConnection.open().fail(ex => {
       fm.liveswitch.Log.error("Failed to open upstream connection.", ex);
     });
   }
@@ -88,6 +90,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let audioStream = new fm.liveswitch.AudioStream(remoteMedia);
     let videoStream = new fm.liveswitch.VideoStream(remoteMedia);
     let conn = receiverChannel.createSfuDownstreamConnection(remoteConnectionInfo, audioStream, videoStream);
+    conn.addOnRemoteUpdate((_, newConnInfo) => {
+      let status = "";
+      if (newConnInfo.getRemoteAudioMuted()) {
+        if (newConnInfo.getRemoteVideoMuted()) {
+          status = "Mic & Camera Muted"
+        } else {
+          status = "Mic Muted"
+        }
+      } else if (newConnInfo.getRemoteVideoMuted()) {
+        status = "Camera Muted"
+      }
+      remoteStatusOverlay.innerText = status;
+    });
     return conn.open().then(_ => {
       remoteVideo.appendChild(remoteMedia.getView());
     }).fail(ex => {
@@ -121,7 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
     muteCameraButton.textContent = "Mute Camera";
 
     if (receiverClient) {
-      remoteVideo.innerHTML = '';
+      remoteVideo.replaceChildren(remoteVideo.firstElementChild);
+      remoteStatusOverlay.innerText = "";
       receiverClient.unregister();
       receiverClient = null;
       receiverChannel = null;
@@ -151,6 +167,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (localAudio.getState() == fm.liveswitch.LocalMediaState.Started) {
       muteMicrophoneButton.textContent = "Muting Microphone";
       localAudio.stop().then(_ => {
+        let config = senderUpstreamConnection.getConfig();
+        config.setLocalAudioMuted(true);
+        senderUpstreamConnection.update(config).fail(ex => {
+          fm.liveswitch.Log.error("Failed to update connection to have audio muted.", ex);
+          // Fine to ignore as locally we're muted
+        });
         muteMicrophoneButton.textContent = "Unmute Microphone";
         muteMicrophoneButton.disabled = false;
       }).fail(ex => {
@@ -161,6 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       muteMicrophoneButton.textContent = "Unmuting Microphone";
       localAudio.start().then(_ => {
+        let config = senderUpstreamConnection.getConfig();
+        config.setLocalAudioMuted(false);
+        senderUpstreamConnection.update(config).fail(ex => {
+          fm.liveswitch.Log.error("Failed to update connection to have unmuted audio.", ex);
+          // This could be an issue as locally we think we're unmuted, but remote side might not hear us. Investigate why update() failed.
+        });
         muteMicrophoneButton.textContent = "Mute Microphone";
         muteMicrophoneButton.disabled = false;
       }).fail(ex => {
@@ -177,6 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (localVideo.getState() == fm.liveswitch.LocalMediaState.Started) {
       muteCameraButton.textContent = "Muting Camera";
       localVideo.stop().then(_ => {
+        let config = senderUpstreamConnection.getConfig();
+        config.setLocalVideoMuted(true);
+        senderUpstreamConnection.update(config).fail(ex => {
+          fm.liveswitch.Log.error("Failed to update connection to have video muted.", ex);
+          // Fine to ignore as locally we're muted
+        });
         muteCameraButton.textContent = "Unmute Camera";
         muteCameraButton.disabled = false;
       }).fail(ex => {
@@ -187,6 +221,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       muteCameraButton.textContent = "Unmuting Camera";
       localVideo.start().then(_ => {
+        let config = senderUpstreamConnection.getConfig();
+        config.setLocalVideoMuted(false);
+        senderUpstreamConnection.update(config).fail(ex => {
+          fm.liveswitch.Log.error("Failed to update connection to have unmuted video.", ex);
+          // This could be an issue as locally we think we're unmuted, but remote side might not hear us. Investigate why update() failed.
+        });
         muteCameraButton.textContent = "Mute Camera";
         muteCameraButton.disabled = false;
       }).fail(ex => {

@@ -58,6 +58,14 @@
             height: 100%;
         }
 
+        .overlay {
+            position: absolute;
+            width: 250px;
+            height: 15px;
+            padding: 10px;
+            pointer-events: none; /* Allows interactions with the video below */
+        }
+
         .button-container {
             margin-top: 20px;
             text-align: center;
@@ -93,7 +101,9 @@
     <section>
         <div class="video-container">
             <div id="userVideo" class="video"></div>
-            <div id="remoteVideo" class="video"></div>
+            <div id="remoteVideo" class="video">
+                <span id="remoteStatusOverlay" class="overlay"></span>
+            </div>
         </div>
 
         <div class="button-container">
