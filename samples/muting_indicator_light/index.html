@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muting Indicator Light</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1280px;
+            margin: auto;
+            height: 90%;
+        }
+
+        .video {
+            width: 45%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .video > div {
+            height: 100%;
+        }
+
+        .overlay {
+            position: absolute;
+            width: 250px;
+            height: 15px;
+            padding: 10px;
+            pointer-events: none; /* Allows interactions with the video below */
+        }
+
+        .button-container {
+            margin-top: 20px;
+            text-align: center;
+            height: 10%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+
+        button:hover:enabled {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Muting Indicator Light</h1>
+        Join a channel and test the Mute buttons. You should see the indicator lights on your devices and on the browser tabs turn off when muting.
+    </header>
+
+    <section>
+        <div class="video-container">
+            <div id="userVideo" class="video"></div>
+            <div id="remoteVideo" class="video">
+                <span id="remoteStatusOverlay" class="overlay"></span>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button id="joinButton">Join</button>
+            <button id="leaveButton" disabled>Leave</button>
+            <button id="muteMicrophoneButton" disabled>Mute Microphone</button>
+            <button id="muteCameraButton" disabled>Mute Camera</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023+ LiveSwitch Inc. All rights reserved.</p>
+    </footer>
+
+    <script src="https://demo.liveswitch.fm/lib/fm.liveswitch.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
