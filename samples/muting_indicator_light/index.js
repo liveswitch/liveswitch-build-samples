@@ -8,6 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let localAudio;
   let localVideo;
+  let gatewayUrl = "https://v1.liveswitch.fm:8443/sync";
+  let applicationId = "my-app-id";
+  let sharedSecret = "--replaceThisWithYourOwnSharedSecret--";
+  let channelId = (Math.floor(Math.random() * 900000) + 100000).toString();
+  let senderClient;
+  let receiverClient;
+  let senderChannel;
+  let receiverChannel;
 
   fm.liveswitch.Log.registerProvider(new fm.liveswitch.ConsoleLogProvider(fm.liveswitch.LogLevel.Debug));
 
@@ -17,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localAudio = new fm.liveswitch.LocalMedia(true, false);
       await localAudio.start();
     } catch (error) {
-      fm.liveswitch.Log.error("Error starting local audio: " + error);
+      fm.liveswitch.Log.error("Error starting local audio.", error);
     }
 
     try {
@@ -25,8 +33,66 @@ document.addEventListener("DOMContentLoaded", () => {
       await localVideo.start();
       userVideo.appendChild(localVideo.getView());
     } catch (error) {
-      fm.liveswitch.Log.error("Error starting local video: " + error);
+      fm.liveswitch.Log.error("Error starting local video.", error);
     }
+  }
+
+  // Function for sender to register with LiveSwitch Gateway, join a channel and create upstream connection
+  async function senderRegisterAndConnect() {
+    let promise = new fm.liveswitch.Promise();
+    senderClient = new fm.liveswitch.Client(gatewayUrl, applicationId);
+    let channelClaims = [new fm.liveswitch.ChannelClaim(channelId)];
+    let token = fm.liveswitch.Token.generateClientRegisterToken(applicationId, senderClient.getUserId(), senderClient.getDeviceId(), senderClient.getId(), null, channelClaims, sharedSecret);
+    senderClient.register(token).then(channels => {
+      senderChannel = channels[0];
+      openSfuUpstreamConnection().then(_ => {
+        promise.resolve(null);
+      }).catch(ex => {
+        promise.reject(ex)
+      });
+    }).fail(ex => {
+      fm.liveswitch.Log.error("Failed to register sender.", ex);
+      promise.reject(ex);
+    });
+    return promise;
+  }
+
+  async function openSfuUpstreamConnection() {
+    let audioStream = new fm.liveswitch.AudioStream(localAudio);
+    let videoStream = new fm.liveswitch.VideoStream(localVideo);
+    let conn = senderChannel.createSfuUpstreamConnection(audioStream, videoStream);
+    return conn.open().fail(ex => {
+      fm.liveswitch.Log.error("Failed to open upstream connection.", ex);
+    });
+  }
+
+  // Function for receiver to register with LiveSwitch Gateway, join a channel and create downstream connection
+  async function receiverRegisterAndConnect() {
+    let promise = new fm.liveswitch.Promise();
+    receiverClient = new fm.liveswitch.Client(gatewayUrl, applicationId);
+    let channelClaims = [new fm.liveswitch.ChannelClaim(channelId)];
+    let token = fm.liveswitch.Token.generateClientRegisterToken(applicationId, receiverClient.getUserId(), receiverClient.getDeviceId(), receiverClient.getId(), null, channelClaims, sharedSecret);
+    receiverClient.register(token).then(channels => {
+      receiverChannel = channels[0];
+      receiverChannel.addOnRemoteUpstreamConnectionOpen(openSfuDownstreamConnection);
+      promise.resolve(null);
+    }).fail(ex => {
+      fm.liveswitch.Log.error("Failed to register receiver.", ex);
+      promise.reject(ex);
+    });
+    return promise;
+  }
+
+  async function openSfuDownstreamConnection(remoteConnectionInfo) {
+    let remoteMedia = new fm.liveswitch.RemoteMedia(remoteConnectionInfo.getHasAudio(), remoteConnectionInfo.getHasVideo());
+    let audioStream = new fm.liveswitch.AudioStream(remoteMedia);
+    let videoStream = new fm.liveswitch.VideoStream(remoteMedia);
+    let conn = receiverChannel.createSfuDownstreamConnection(remoteConnectionInfo, audioStream, videoStream);
+    return conn.open().then(_ => {
+      remoteVideo.appendChild(remoteMedia.getView());
+    }).fail(ex => {
+      fm.liveswitch.Log.error("Failed to open downstream connection.", ex);
+    });
   }
 
   // Function to join the call
@@ -39,7 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
       muteCameraButton.disabled = false;
     } catch (_) {
       joinButton.disabled = false;
+      return;
     }
+
+    senderRegisterAndConnect();
+    receiverRegisterAndConnect();
   }
 
   // Function to leave the call and stop local media
@@ -50,12 +120,27 @@ document.addEventListener("DOMContentLoaded", () => {
     muteMicrophoneButton.textContent = "Mute Microphone";
     muteCameraButton.textContent = "Mute Camera";
 
+    if (receiverClient) {
+      remoteVideo.innerHTML = '';
+      receiverClient.unregister();
+      receiverClient = null;
+      receiverChannel = null;
+    }
+
+    if (senderClient) {
+      senderClient.unregister();
+      senderClient = null;
+      senderChannel = null;
+    }
+
     if (localAudio) {
       localAudio.stop();
+      localAudio = null;
     }
     if (localVideo) {
       localVideo.stop();
       userVideo.innerHTML = '';
+      localVideo = null;
     }
     joinButton.disabled = false;
   }
@@ -64,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function toggleMicrophone() {
     muteMicrophoneButton.disabled = true;
     if (localAudio.getState() == fm.liveswitch.LocalMediaState.Started) {
+      muteMicrophoneButton.textContent = "Muting Microphone";
       localAudio.stop().then(_ => {
         muteMicrophoneButton.textContent = "Unmute Microphone";
         muteMicrophoneButton.disabled = false;
@@ -73,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
         muteMicrophoneButton.disabled = false;
       });
     } else {
+      muteMicrophoneButton.textContent = "Unmuting Microphone";
       localAudio.start().then(_ => {
         muteMicrophoneButton.textContent = "Mute Microphone";
         muteMicrophoneButton.disabled = false;
@@ -88,6 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function toggleCamera() {
     muteCameraButton.disabled = true;
     if (localVideo.getState() == fm.liveswitch.LocalMediaState.Started) {
+      muteCameraButton.textContent = "Muting Camera";
       localVideo.stop().then(_ => {
         muteCameraButton.textContent = "Unmute Camera";
         muteCameraButton.disabled = false;
@@ -97,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
         muteCameraButton.disabled = false;
       });
     } else {
+      muteCameraButton.textContent = "Unmuting Camera";
       localVideo.start().then(_ => {
         muteCameraButton.textContent = "Mute Camera";
         muteCameraButton.disabled = false;
