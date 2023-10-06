@@ -4,93 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muting Indicator Light</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        header {
-            background-color: #007bff;
-            color: #fff;
-            text-align: center;
-            padding: 20px 0;
-            width: 100%;
-        }
-
-        h1 {
-            font-size: 24px;
-        }
-
-        section {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            height: 100%;
-        }
-
-        .video-container {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            max-width: 1280px;
-            margin: auto;
-            height: 90%;
-        }
-
-        .video {
-            width: 45%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .video > div {
-            height: 100%;
-        }
-
-        .overlay {
-            position: absolute;
-            width: 250px;
-            height: 15px;
-            padding: 10px;
-            pointer-events: none; /* Allows interactions with the video below */
-        }
-
-        .button-container {
-            margin-top: 20px;
-            text-align: center;
-            height: 10%;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            margin: 5px;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            background-color: grey;
-            cursor: not-allowed;
-        }
-
-        button:hover:enabled {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <header>
@@ -100,9 +15,19 @@
 
     <section>
         <div class="video-container">
-            <div id="userVideo" class="video"></div>
-            <div id="remoteVideo" class="video">
-                <span id="remoteStatusOverlay" class="overlay"></span>
+            <div class="local-container user-container">
+                <div id="userVideo" class="user-video"></div>
+                <div class="user-indicators">
+                    <i id="user-mic-mute-indicator" class="fa fa-microphone user-status-indicator" style="font-size:36px"></i>
+                    <i id="user-camera-mute-indicator" class="fa fa-eye user-status-indicator" style="font-size:36px"></i>
+                </div>
+            </div>
+            <div class="remote-container user-container">
+                <div id="remoteVideo" class="user-video"></div>
+                <div class="user-indicators">
+                    <i id="remote-mic-mute-indicator" class="fa fa-microphone user-status-indicator" style="font-size:36px"></i>
+                    <i id="remote-camera-mute-indicator" class="fa fa-eye user-status-indicator" style="font-size:36px"></i>
+                </div>
             </div>
         </div>
 
