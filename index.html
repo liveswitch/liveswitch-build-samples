@@ -1,89 +1,13 @@
 <!DOCTYPE html>
-<html><head>
+<html>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiveSwitch Build SDK Web Samples</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #007bff;
-            color: #fff;
-            text-align: center;
-            padding: 30px 0;
-        }
-
-        h1 {
-            font-size: 36px;
-        }
-
-        p {
-            font-size: 18px;
-        }
-
-        section {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            font-size: 24px;
-            margin-top: 0;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 20px;
-        }
-
-        h3 {
-            font-size: 20px;
-            margin: 0;
-        }
-
-        p {
-            font-size: 16px;
-            margin-top: 5px;
-        }
-
-        body > p {
-            color: #555;
-        }
-
-        a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        a:hover {
-            background-color: #0056b3;
-        }
-
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
     <header>
         <h1>LiveSwitch Build SDK Web Samples</h1>
@@ -95,20 +19,24 @@
         <ul>
             <li>
                 <h3>Muting devices where indicator light turns off</h3>
-                <p>There are several ways to mute media in the LiveSwitch SDK. This sample shows how to mute and have the indicator light turn off.</p>
-                <a href="samples/muting_indicator_light/index.html">View Sample</a>
+                <p>There are several ways to mute media in the LiveSwitch SDK. This sample shows how to mute and have
+                    the indicator light turn off.</p>
+                <button onclick="location.href='samples/muting_indicator_light/index.html'" type="button">View
+                    Sample</button>
             </li>
 
             <li>
                 <h3>Join with media muted</h3>
-                <p>When joining a session a user's devices won't be muted by defaut. This sample shows how to join a session with the microphone and camera already muted.</p>
-                <a>Not Yet Available</a>
+                <p>When joining a session a user's devices won't be muted by defaut. This sample shows how to join a
+                    session with the microphone and camera already muted.</p>
+                <button disabled type="button">Not Yet Available</button>
             </li>
 
             <li>
                 <h3>Selecting devices before joining</h3>
-                <p>Device selection usually happens automatically. This sample shows how to allow for selecting a device before joining a session.</p>
-                <a>Not Yet Available</a>
+                <p>Device selection usually happens automatically. This sample shows how to allow for selecting a device
+                    before joining a session.</p>
+                <button disabled type="button">Not Yet Available</button>
             </li>
 
             <!-- Add more applications as needed -->
@@ -120,4 +48,5 @@
         <p>&copy; 2023+ LiveSwitch Inc. All rights reserved.</p>
     </footer>
 </body>
+
 </html>

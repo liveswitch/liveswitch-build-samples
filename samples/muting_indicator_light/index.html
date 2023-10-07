@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,26 +8,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="index.css">
 </head>
-<body>
+
+<body class="body">
     <header>
         <h1>Muting Indicator Light</h1>
-        Join a channel and test the Mute buttons. You should see the indicator lights on your devices and on the browser tabs turn off when muting.
+        Join a channel and test the Mute buttons. You should see the indicator lights on your devices and on the browser
+        tabs turn off when muting.
     </header>
 
-    <section>
+    <section class="section">
         <div class="video-container">
             <div class="local-container user-container">
                 <div id="userVideo" class="user-video"></div>
                 <div class="user-indicators">
-                    <i id="user-mic-mute-indicator" class="fa fa-microphone user-status-indicator" style="font-size:36px"></i>
-                    <i id="user-camera-mute-indicator" class="fa fa-eye user-status-indicator" style="font-size:36px"></i>
+                    <i id="user-mic-mute-indicator" class="fa fa-microphone user-status-indicator"
+                        style="font-size:36px"></i>
+                    <i id="user-camera-mute-indicator" class="fa fa-eye user-status-indicator"
+                        style="font-size:36px"></i>
                 </div>
             </div>
             <div class="remote-container user-container">
                 <div id="remoteVideo" class="user-video"></div>
                 <div class="user-indicators">
-                    <i id="remote-mic-mute-indicator" class="fa fa-microphone user-status-indicator" style="font-size:36px"></i>
-                    <i id="remote-camera-mute-indicator" class="fa fa-eye user-status-indicator" style="font-size:36px"></i>
+                    <i id="remote-mic-mute-indicator" class="fa fa-microphone user-status-indicator"
+                        style="font-size:36px"></i>
+                    <i id="remote-camera-mute-indicator" class="fa fa-eye user-status-indicator"
+                        style="font-size:36px"></i>
                 </div>
             </div>
         </div>
@@ -46,4 +53,5 @@
     <script src="https://demo.liveswitch.fm/lib/fm.liveswitch.js"></script>
     <script src="index.js"></script>
 </body>
+
 </html>
