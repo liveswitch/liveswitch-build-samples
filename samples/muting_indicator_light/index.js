@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const leaveButton = document.getElementById("leaveButton");
   const muteMicrophoneButton = document.getElementById("muteMicrophoneButton");
   const muteCameraButton = document.getElementById("muteCameraButton");
+  const localVideoStatus = document.getElementById("local-video-status");
+  const remoteVideoStatus = document.getElementById("remote-video-status");
   const localMicMuteIndicator = document.getElementById("user-mic-mute-indicator");
   const localCameraMuteIndicator = document.getElementById("user-camera-mute-indicator");
   const remoteMicMuteIndicator = document.getElementById("remote-mic-mute-indicator");
@@ -21,6 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let senderChannel;
   let receiverChannel;
   let senderUpstreamConnection;
+  let localVideoDiv;
+  let remoteVideoDiv;
 
   fm.liveswitch.Log.registerProvider(new fm.liveswitch.ConsoleLogProvider(fm.liveswitch.LogLevel.Debug));
 
@@ -37,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       localVideo = new fm.liveswitch.LocalMedia(false, true);
       await localVideo.start();
-      userVideo.appendChild(localVideo.getView());
+      localVideoDiv = localVideo.getView();
+      userVideo.appendChild(localVideoDiv);
     } catch (error) {
       fm.liveswitch.Log.error("Error starting local video.", error);
       throw error;
@@ -102,13 +107,18 @@ document.addEventListener("DOMContentLoaded", () => {
         remoteMicMuteIndicator.classList.remove("fa-microphone-slash");
       }
       if (newConnInfo.getRemoteVideoMuted()) {
+        remoteVideoDiv.classList.add("hidden");
         remoteCameraMuteIndicator.classList.add("fa-eye-slash");
+        remoteVideoStatus.classList.remove("hidden");
       } else {
+        remoteVideoDiv.classList.remove("hidden");
         remoteCameraMuteIndicator.classList.remove("fa-eye-slash");
+        remoteVideoStatus.classList.add("hidden");
       }
     });
     return conn.open().then(_ => {
-      remoteVideo.appendChild(remoteMedia.getView());
+      remoteVideoDiv = remoteMedia.getView();
+      remoteVideo.appendChild(remoteVideoDiv);
     }).fail(ex => {
       fm.liveswitch.Log.error("Failed to open downstream connection.", ex);
     });
@@ -144,18 +154,19 @@ document.addEventListener("DOMContentLoaded", () => {
     remoteCameraMuteIndicator.classList.remove("fa-eye-slash");
 
     if (receiverClient) {
-      while (remoteVideo.firstChild) {
-        remoteVideo.removeChild(remoteVideo.lastChild);
-      }
+      remoteVideo.removeChild(remoteVideoDiv);
       receiverClient.unregister();
       receiverClient = null;
       receiverChannel = null;
+      remoteVideoDiv = null;
+      remoteVideoStatus.classList.add("hidden");
     }
 
     if (senderClient) {
       senderClient.unregister();
       senderClient = null;
       senderChannel = null;
+      senderUpstreamConnection = null;
     }
 
     if (localAudio) {
@@ -164,8 +175,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (localVideo) {
       localVideo.stop();
-      userVideo.innerHTML = '';
+      userVideo.removeChild(localVideoDiv);
       localVideo = null;
+      localVideoDiv = null;
+      localVideoStatus.classList.add("hidden");
     }
     joinButton.disabled = false;
   }
@@ -222,6 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
           fm.liveswitch.Log.error("Failed to update connection to have video muted.", ex);
           // Fine to ignore as locally we're muted
         });
+        localVideoDiv.classList.add("hidden");
+        localVideoStatus.classList.remove("hidden");
         localCameraMuteIndicator.classList.add("fa-eye-slash");
         muteCameraButton.textContent = "Unmute Camera";
         muteCameraButton.disabled = false;
@@ -239,6 +254,8 @@ document.addEventListener("DOMContentLoaded", () => {
           fm.liveswitch.Log.error("Failed to update connection to have unmuted video.", ex);
           // This could be an issue as locally we think we're unmuted, but remote side might not hear us. Investigate why update() failed.
         });
+        localVideoDiv.classList.remove("hidden");
+        localVideoStatus.classList.add("hidden");
         localCameraMuteIndicator.classList.remove("fa-eye-slash");
         muteCameraButton.textContent = "Mute Camera";
         muteCameraButton.disabled = false;
