@@ -19,7 +19,12 @@
     <section class="section">
         <div class="video-container">
             <div class="local-container user-container">
-                <div id="userVideo" class="user-video"></div>
+                <div id="userVideo" class="user-video">
+                    <div id="local-video-status" class="user-video-status hidden">
+                        <i class="fa fa-eye-slash" style="font-size:36px"></i>
+                        <span>You have muted your video.</span>
+                    </div>
+                </div>
                 <div class="user-indicators">
                     <i id="user-mic-mute-indicator" class="fa fa-microphone user-status-indicator"
                         style="font-size:36px"></i>
@@ -28,7 +33,12 @@
                 </div>
             </div>
             <div class="remote-container user-container">
-                <div id="remoteVideo" class="user-video"></div>
+                <div id="remoteVideo" class="user-video">
+                    <div id="remote-video-status" class="user-video-status hidden">
+                        <i class="fa fa-eye-slash" style="font-size:36px"></i>
+                        <span>Remote user has muted their video.</span>
+                    </div>
+                </div>
                 <div class="user-indicators">
                     <i id="remote-mic-mute-indicator" class="fa fa-microphone user-status-indicator"
                         style="font-size:36px"></i>

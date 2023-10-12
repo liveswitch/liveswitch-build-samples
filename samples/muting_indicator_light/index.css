@@ -44,6 +44,17 @@ video {
     height: auto;
 }
 
+.user-video-status {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    /* To stack the icon and text vertically */
+    align-items: center;
+    /* To center items horizontally */
+    justify-content: center;
+    /* To center items vertically */
+}
+
 .user-indicators {
     display: flex;
     justify-content: center;
