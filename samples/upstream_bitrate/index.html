@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upstream Bitrate</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body class="body">
+    <header>
+        <h1>Upstream Bitrate</h1>
+        <div>
+            Join a channel and adjust the upstream bitrate.<br/><br/>You should see the quality of the remote video change according to which bitrate is set.
+            <br/><br/>Note that bitrate increases may take longer for their effect to be observed as WebRTC gradually increases bitrate
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="video-container">
+            <div class="local-container user-container">
+                <div id="userVideo" class="user-video">
+                </div>
+                <div class="user-indicators">
+                    <label for="sendingBitrate">Sending bitrate:&nbsp;</label>
+                    <span id="sendingBitrate">0</span>
+                    <span>&nbsp;kbps</span>
+                </div>
+            </div>
+            <div class="remote-container user-container">
+                <div id="remoteVideo" class="user-video">
+                </div>
+                <div class="user-indicators">
+                    <label for="receivingBitrate">Receiving bitrate:&nbsp;</label>
+                    <span id="receivingBitrate">0</span>
+                    <span>&nbsp;kbps</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button id="joinButton">Join</button>
+            <button id="leaveButton" disabled>Leave</button>
+            <label>Upstream bitrate:</label>
+            <select id="upstreamBitrate">
+                <option value=100>100 kbps</option>
+                <option value=500>500 kbps</option>
+                <option value=1000>1 mbps</option>
+                <option value=2000 selected>2 mbps</option>
+            </select>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024+ LiveSwitch Inc. All rights reserved.</p>
+    </footer>
+
+    <script src="https://demo.liveswitch.fm/lib/fm.liveswitch.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>
