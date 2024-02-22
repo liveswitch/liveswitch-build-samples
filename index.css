@@ -110,3 +110,11 @@ footer {
 .hidden {
     display: none !important;
 }
+
+.video-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
