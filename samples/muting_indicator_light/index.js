@@ -101,12 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let videoStream = new fm.liveswitch.VideoStream(remoteMedia);
     let conn = receiverChannel.createSfuDownstreamConnection(remoteConnectionInfo, audioStream, videoStream);
     conn.addOnRemoteUpdate((_, newConnInfo) => {
-      if (newConnInfo.getRemoteAudioMuted()) {
+      if (newConnInfo.getLocalAudioDisabled()) {
         remoteMicMuteIndicator.classList.add("fa-microphone-slash");
       } else {
         remoteMicMuteIndicator.classList.remove("fa-microphone-slash");
       }
-      if (newConnInfo.getRemoteVideoMuted()) {
+      if (newConnInfo.getLocalVideoDisabled()) {
         remoteVideoDiv.classList.add("hidden");
         remoteCameraMuteIndicator.classList.add("fa-eye-slash");
         remoteVideoStatus.classList.remove("hidden");
@@ -190,9 +190,9 @@ document.addEventListener("DOMContentLoaded", () => {
       muteMicrophoneButton.textContent = "Muting Microphone";
       localAudio.stop().then(_ => {
         let config = senderUpstreamConnection.getConfig();
-        config.setLocalAudioMuted(true);
+        config.setLocalAudioDisabled(true);
         senderUpstreamConnection.update(config).fail(ex => {
-          fm.liveswitch.Log.error("Failed to update connection to have audio muted.", ex);
+          fm.liveswitch.Log.error("Failed to update connection to have audio disabled.", ex);
           // Fine to ignore as locally we're muted
         });
         localMicMuteIndicator.classList.add("fa-microphone-slash");
@@ -207,9 +207,9 @@ document.addEventListener("DOMContentLoaded", () => {
       muteMicrophoneButton.textContent = "Unmuting Microphone";
       localAudio.start().then(_ => {
         let config = senderUpstreamConnection.getConfig();
-        config.setLocalAudioMuted(false);
+        config.setLocalAudioDisabled(false);
         senderUpstreamConnection.update(config).fail(ex => {
-          fm.liveswitch.Log.error("Failed to update connection to have unmuted audio.", ex);
+          fm.liveswitch.Log.error("Failed to update connection to have audio enabled.", ex);
           // This could be an issue as locally we think we're unmuted, but remote side might not hear us. Investigate why update() failed.
         });
         localMicMuteIndicator.classList.remove("fa-microphone-slash");
@@ -230,9 +230,9 @@ document.addEventListener("DOMContentLoaded", () => {
       muteCameraButton.textContent = "Muting Camera";
       localVideo.stop().then(_ => {
         let config = senderUpstreamConnection.getConfig();
-        config.setLocalVideoMuted(true);
+        config.setLocalVideoDisabled(true);
         senderUpstreamConnection.update(config).fail(ex => {
-          fm.liveswitch.Log.error("Failed to update connection to have video muted.", ex);
+          fm.liveswitch.Log.error("Failed to update connection to have video disabled.", ex);
           // Fine to ignore as locally we're muted
         });
         localVideoDiv.classList.add("hidden");
@@ -249,9 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
       muteCameraButton.textContent = "Unmuting Camera";
       localVideo.start().then(_ => {
         let config = senderUpstreamConnection.getConfig();
-        config.setLocalVideoMuted(false);
+        config.setLocalVideoDisabled(false);
         senderUpstreamConnection.update(config).fail(ex => {
-          fm.liveswitch.Log.error("Failed to update connection to have unmuted video.", ex);
+          fm.liveswitch.Log.error("Failed to update connection to have video enabled.", ex);
           // This could be an issue as locally we think we're unmuted, but remote side might not hear us. Investigate why update() failed.
         });
         localVideoDiv.classList.remove("hidden");
