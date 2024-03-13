@@ -69,8 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (senderStats != null) {
         var bytesSent = senderStats.getBytesSent();
         if (lastSenderStatsEventTimestamp) {
-          var secondsSinceLastStatsEvent = Date.now() - lastSenderStatsEventTimestamp;
-          var bitrate = Math.floor((bytesSent - lastSenderStatsEventBytesSent) * 8 / (secondsSinceLastStatsEvent));
+          var millisecondsSinceLastStatsEvent = Date.now() - lastSenderStatsEventTimestamp;
+          var bitrate = Math.floor((bytesSent - lastSenderStatsEventBytesSent) * 8 / (millisecondsSinceLastStatsEvent));
+          // bitrate in kbps
           sendingBitrateSpan.innerText = bitrate.toLocaleString();
         }
         lastSenderStatsEventBytesSent = bytesSent;
@@ -109,8 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (receiverStats != null) {
         var bytesReceived = receiverStats.getBytesReceived();
         if (lastReceiverStatsEventTimestamp) {
-          var secondsSinceLastStatsEvent = Date.now() - lastReceiverStatsEventTimestamp;
-          var bitrate = Math.floor((bytesReceived - lastReceiverStatsEventBytesReceived) * 8 / (secondsSinceLastStatsEvent));
+          var millisecondsSinceLastStatsEvent = Date.now() - lastReceiverStatsEventTimestamp;
+          var bitrate = Math.floor((bytesReceived - lastReceiverStatsEventBytesReceived) * 8 / (millisecondsSinceLastStatsEvent));
+          // bitrate in kbps
           receivingBitrateSpan.innerText = bitrate.toLocaleString();
         }
         lastReceiverStatsEventBytesReceived = bytesReceived;
