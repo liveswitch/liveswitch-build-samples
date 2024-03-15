@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer Overlay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body class="body">
+    <header>
+        <h1>Timer Overlay</h1>
+        <div>
+            Join a channel and show a countdown timer as part of the Upstream Video feed<br/><br/>This demo shows the ability to add an 
+            overlay to a video feed on the local media object and send that adjusted video to the media servers as an upstream connection.
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="video-container">
+            <div class="local-container user-container">
+                <div id="userVideoHeader" class="video-header">
+                    <b>Channel ID:</b>
+                    <span id="channelID"></span>
+                </div>
+                <div id="canvasContainer" class="user-video">
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button id="joinButton">Join</button>
+            <button id="leaveButton" disabled>Leave</button>
+            <label>Timer Duration (mins):</label>
+            <input type="number" id="time" name="time" min="1" max="15" step="1" value="5">
+            <button id="startTimerButton">Start Timer</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024+ LiveSwitch Inc. All rights reserved.</p>
+    </footer>
+
+    <script src="https://demo.liveswitch.fm/lib/fm.liveswitch.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>
