@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let gatewayUrl = "https://v1.liveswitch.fm:8443/sync";
   let applicationId = "my-app-id";
   let sharedSecret = "--replaceThisWithYourOwnSharedSecret--";
+
   let channelId = (Math.floor(Math.random() * 900000) + 100000).toString();
   channelIdSpan.innerText = channelId;
   let senderClient;
@@ -22,6 +23,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let timerRunning = false;
   let currentTime;
 
+  let height = 720;
+  let width = 1280;
+
+  if (window.innerHeight < 500) {
+    height = 250;
+    width = 640;
+  }
+  else if (window.innerHeight < 1000) {
+    height = 400;
+    width = 350;
+  }
+
   fm.liveswitch.Log.registerProvider(new fm.liveswitch.ConsoleLogProvider(fm.liveswitch.LogLevel.Debug));
 
   // Function to set up and display local video
@@ -31,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // create a reference to the local video stream
         stream = await navigator.mediaDevices.getUserMedia({
           audio: false,
-          video: { width: 1280, height: 720 }
+          video: { width: width, height: height }
         });
       } catch (ex) { }
       const video = document.createElement("video");
@@ -49,17 +62,17 @@ document.addEventListener("DOMContentLoaded", () => {
       // add the new canvas object to the DOM
       canvasContainer.appendChild(canvas);
       // set the size of the canvas
-      canvas.width = 1280;
-      canvas.height = 720;
+      canvas.width = width;
+      canvas.height = height;
 
       let draw = () => {
         // clear previous results
-        ctx.clearRect(0, 0, 1280, 720);
+        ctx.clearRect(0, 0, width, height);
         // draw new reults to the canvas
-        ctx.drawImage(video, 0, 0, 1280, 720);
+        ctx.drawImage(video, 0, 0, width, height);
         if (timerRunning) {
           ctx.fillStyle = "white";
-          ctx.fillRect(595, 5, 100, 40);
+          ctx.fillRect((width/2) - 45, 5, 100, 40);
           ctx.fillStyle = "black";
           ctx.font = "30px Arial";
           const date = new Date();
@@ -69,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (second < 10) second = "0" + second
           ctx.fillText(
             minute + ":" + second,
-            605,
+            (width/2) - 35,
             35
           );
           // console.log("getSeconds: " + date.getSeconds() + " lastTime: " + lastTimeInSeconds)
